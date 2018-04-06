@@ -11,7 +11,7 @@ import LoanForm from "../components/LoanForm";
 import ImageUpload from "../components/ImageUpload";
 import { Spinner } from "../components/globals";
 
-const endpoint = "https://owygiem6pe.execute-api.eu-west-1.amazonaws.com/dev/";
+const endpoint = "https://m482zc1xki.execute-api.eu-west-1.amazonaws.com/dev/";
 
 class LoanContainer extends Component {
     state = {
