@@ -1,32 +1,19 @@
 import React, { Component } from "react";
-import axios from "axios";
 import FacebookConnect from "../components/FacebookConnect";
-
-const fb_url = "https://graph.facebook.com";
 
 class FacebookConnectContainer extends Component {
     state = {
-        loadingFb: false,
-        signedInFb: false
-    };
-
-    getFriendCount = ({ accessToken, id }) => {
-        axios.get(`${fb_url}/${id}/friends`, {
-            headers: {
-                Authorization: "Bearer " + accessToken
-            }
-        });
+        loading_fb: false
     };
 
     successfulLogin = response => {
-        this.setState(
-            {
-                signedInFb: true
-            },
-            () => {
-                this.getFriendCount(response);
+        this.setState({ loading_fb: true }, () => {
+            if (!response.accessToken) {
+                console.log("ERROR: NO ACCESS TOKEN GIVEN, FUCK OFF");
+                return;
             }
-        );
+            this.props.handleSuccessLogin(response.accessToken);
+        });
     };
 
     render() {

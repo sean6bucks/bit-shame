@@ -1,6 +1,42 @@
 import React, { Component } from "react";
-import { Card } from "material-ui/Card";
-const styles = {};
+import FlatButton from "material-ui/FlatButton";
+import styled from "styled-components";
+import { InstagramLoginButton } from "react-social-login-buttons";
+
+import { colors } from "../globals";
+
+import FacebookConnectContainer from "../../containers/FacebookConnectContainer";
+
+const StyledInputBox = styled.div`
+    display: flex;
+    flex-direction: row;
+    margin: 20px 0;
+    width: 100%;
+`;
+
+const StyledInput = styled.input`
+    line-height: 20px;
+    font-size: 18px;
+    margin-right: 5px;
+    padding: 15px;
+    flex: 1;
+    border: 2px solid ${colors.lightGrey};
+    border-radius: 10px;
+    outline: none;
+    &:focus {
+        border: 2px solid ${colors.darkGrey};
+    }
+`;
+const StyledSymbol = styled.span`
+    padding-top: 10px;
+    width: 20px;
+    color: #000;
+    font-size: 26px;
+`;
+const StyledSocial = styled.div`
+    margin-top: 10px;
+`;
+
 // Global functions
 export const formatCurrencyString = string => {
     const removed_symbols = string.replace(/[$€£¥\s]+/g, "");
@@ -16,18 +52,6 @@ export const formatCurrencyString = string => {
     return number_parts.join("");
 };
 
-const setValidValue = (int, { min = 0, round = 1 }) => {
-    return isNaN(int) || int < min ? min : roundValue(int, round);
-};
-
-const roundValue = (value, round) => {
-    return Math.round(value / round) * round;
-};
-
-const currencyStringToInt = string => {
-    return parseInt(formatCurrencyString(string), 10);
-};
-
 const numToCurrencyString = (num, locale = "nl-NL", currency = "EUR") => {
     return num.toLocaleString(locale, { currency: currency });
 };
@@ -36,44 +60,22 @@ const numToCurrencyString = (num, locale = "nl-NL", currency = "EUR") => {
 
 class CurrencyInput extends Component {
     state = {
-        focused: false,
-        input: "",
-        symbol: "€",
+        input: 1.0,
         min: 0
-    };
-
-    parseCurrencyValue = input => {
-        // FORM VALUE TO NUMBER AND CHECK FOR FORMAT
-        const currencyInt =
-            typeof input === "string" ? currencyStringToInt(input) : input;
-        return setValidValue(currencyInt, this.state);
-    };
-
-    handleFocus = () => {
-        this.setState({ focused: true });
-    };
-
-    handleBlur = ({ target }) => {
-        this.setState({ focused: false }, () => {
-            const value = this.parseCurrencyValue(target.value);
-            if (value !== this.props.value) this.props.onChange(value);
-            if (numToCurrencyString(value) !== this.state.input) {
-                this.setState({
-                    input: numToCurrencyString(value)
-                });
-            }
-        });
     };
 
     handleChange = ({ target }) => {
         if (!target) return;
         if (target.value !== this.state.input) {
-            this.updateInput(target.value);
+            const value = target.value < 0 ? 0 : target.value;
+            this.updateInput(value);
         }
     };
 
     updateInput = (input = "") => {
-        this.setState({ input });
+        this.setState({ input }, () => {
+            this.props.handleChange(input);
+        });
     };
 
     componentWillMount() {
@@ -107,92 +109,43 @@ class CurrencyInput extends Component {
     }
 
     render() {
-        const input_style = this.state.focused
-            ? Object.assign({}, styles.input, styles.focused)
-            : styles.input;
         return (
-            <div style={styles.input_box}>
-                <span style={styles.symbol}>{this.state.symbol}</span>
-                <input
+            <StyledInputBox>
+                <StyledSymbol>₿</StyledSymbol>
+                <StyledInput
+                    type="number"
                     value={this.state.input}
-                    style={input_style}
                     onFocus={this.handleFocus}
                     onChange={this.handleChange}
                     onBlur={this.handleBlur}
                 />
-            </div>
+            </StyledInputBox>
         );
     }
 }
-
-export const Label = ({ text }) => {
-    return <h4 style={{ marginBottom: 5 }}>{text}</h4>;
-};
-
-export const Fieldset = ({ children, label }) => {
-    return (
-        <div style={{ margin: "15px 0" }}>
-            {label ? <Label text={label} /> : null}
-            {children}
-        </div>
-    );
-};
-
-// NOTE: REACT COMPONENT REQUIRED FOR RADIUM
-class Spinner extends Component {
-    render() {
-        return <span style={styles.spinner} />;
-    }
-}
-// Spinner = Radium(Spinner);
-
-// NOTE: REACT COMPONENT REQUIRED FOR RADIUM
-class SubmitButton extends Component {
-    render() {
-        const {
-            label = "Submit",
-            loading = false,
-            disabled = false,
-            style,
-            handleClick
-        } = this.props;
-
-        const submit_style = Object.assign(
-            {},
-            styles.submit_button,
-            style,
-            disabled || loading ? styles.disabled : {}
-        );
-        return (
-            <span style={submit_style} onClick={handleClick}>
-                {label}
-            </span>
-        );
-    }
-}
-// SubmitButton = Radium(SubmitButton);
 
 const LoanForm = ({
-    children,
-    submit,
-    submitLabel,
-    submitStyle,
-    submitDisabled,
     loading,
-    style
+    error,
+    updateAmount,
+    handleSubmit,
+    handleSuccessLogin
 }) => {
     return (
-        <form style={style}>
-            {children}
-            <div style={styles.submit}>
-                {loading ? <Spinner /> : null}
-                <SubmitButton
-                    label={submitLabel}
-                    loading={loading}
-                    disabled={submitDisabled}
-                    style={submitStyle}
-                    handleClick={submit}
-                />
+        <form style={{ borderRadius: 2 }}>
+            <div style={{ padding: 30 }}>
+                <h2 style={{ color: "#000" }}>
+                    Fill in the amount of Bitcoins
+                </h2>
+                <CurrencyInput handleChange={updateAmount} min="0" />
+                <StyledSocial>
+                    <FacebookConnectContainer
+                        handleSuccessLogin={handleSuccessLogin}
+                    />
+                </StyledSocial>
+                <StyledSocial>
+                    <InstagramLoginButton />
+                </StyledSocial>
             </div>
         </form>
     );

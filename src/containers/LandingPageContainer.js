@@ -1,12 +1,10 @@
 import React, { Component } from "react";
-import { Container, Image } from "../components/globals";
-import LoanContainer from "./LoanContainer";
+import LandingPage from "../components/LandingPage";
 
 const styles = {
     width: "100%",
-    maxWidth: 800,
+    maxWidth: 1000,
     margin: "0 auto",
-    padding: "100px 50px",
     backgroundColor: "black"
 };
 
@@ -14,8 +12,7 @@ class LandingPageContainer extends Component {
     render() {
         return (
             <div style={styles}>
-                <Container />
-                <LoanContainer />
+                <LandingPage />
             </div>
         );
     }
