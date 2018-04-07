@@ -1,18 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import DropzoneS3Uploader from "react-dropzone-s3-uploader";
-import RaisedButton from "material-ui/RaisedButton";
 
 // components
-import { RoundButton, colors } from "../globals";
-
-// GET FACEBOOK ID
-const bucket_url = "https://bitshame.s3.eu-west-1.amazonaws.com/shame.png";
-let show_next_button = false;
-
-const getSignedUrl = (file, callback) => {
-    // axios.post()
-    callback({ signedUrl: bucket_url });
-};
+import { RoundButton, Image, colors } from "../globals";
 
 const UploadDisplay = ({ uploadedFiles, s3Url }) => {
     return (
@@ -42,101 +32,77 @@ const UploadDisplay = ({ uploadedFiles, s3Url }) => {
             ) : null}
             {uploadedFiles.map(({ file }) => {
                 return (
-                    <div
-                        style={{
-                            width: "100%"
-                        }}
-                        key={file.name}
-                    >
-                        <img
-                            style={{
-                                width: "100%",
-                                height: "auto",
-                                verticalAlign: "top"
-                            }}
-                            src={file.preview}
-                        />
-                    </div>
+                    <Image
+                        style={{ width: "100%" }}
+                        src={file.preview}
+                        key={file.preview}
+                    />
                 );
             })}
         </div>
     );
 };
 
-class ImageUpload extends Component {
-    state = {
-        file: null,
-        show_next: false
-    };
-
-    handleFinishedUpload = ({ file, fileUrl, signedUrl }) => {
-        if (!file) return;
-        this.setState({
-            show_next: true,
-            file: file
-        });
-    };
-
-    render() {
-        let dropzoneRef;
-        return (
-            <div style={{ padding: 100 }}>
-                <h5
+const ImageUpload = ({
+    uploadUrl,
+    showNext,
+    handleImageUpload,
+    handleNextClick
+}) => {
+    return (
+        <div style={{ padding: 100 }}>
+            <h5
+                style={{
+                    display: "inline-block",
+                    padding: "3px 2px 0px",
+                    margin: "40px 0",
+                    backgroundColor: colors.purple
+                }}
+            >
+                SHOCK YOUR PARENTS
+            </h5>
+            <h1
+                style={{
+                    fontSize: 40,
+                    marginBottom: 40,
+                    lineHeight: "40px",
+                    maxWidth: 600
+                }}
+            >
+                Reduce your interest rate with your most shameable photo
+            </h1>
+            <DropzoneS3Uploader
+                style={{
+                    width: 600
+                }}
+                s3Url="https://bitshame.s3.eu-west-1.amazonaws.com"
+                upload={{
+                    getSignedUrl: (file, callback) => {
+                        callback({ signedUrl: uploadUrl });
+                    },
+                    accept: "image/*"
+                }}
+                onFinish={handleImageUpload}
+            >
+                <UploadDisplay />
+            </DropzoneS3Uploader>
+            {showNext ? (
+                <div
                     style={{
-                        display: "inline-block",
-                        padding: "3px 2px 0px",
-                        margin: "40px 0",
-                        backgroundColor: colors.purple
+                        marginTop: 30
                     }}
                 >
-                    SHOCK YOUR PARENTS
-                </h5>
-                <h1
-                    style={{
-                        fontSize: 40,
-                        marginBottom: 40,
-                        lineHeight: "40px",
-                        maxWidth: 600
-                    }}
-                >
-                    Reduce your interest rate with your most shameable photo
-                </h1>
-                <DropzoneS3Uploader
-                    ref={node => {
-                        dropzoneRef = node;
-                    }}
-                    style={{
-                        width: 600
-                    }}
-                    s3Url="https://bitshame.s3.eu-west-1.amazonaws.com"
-                    upload={{
-                        getSignedUrl: getSignedUrl,
-                        accept: "image/*"
-                    }}
-                    onFinish={this.handleFinishedUpload}
-                >
-                    <UploadDisplay />
-                </DropzoneS3Uploader>
-                {this.state.show_next ? (
-                    <div
-                        style={{
-                            marginTop: 30
-                        }}
-                    >
-                        <RoundButton
-                            backgroundColor={colors.purple}
-                            label="CHECK YOUR SHAME METER"
-                            labelColor={colors.white}
-                            labelStyle={{ fontSize: 18, padding: 30 }}
-                            onClick={() => {
-                                this.props.handleCheckShame(this.state.file);
-                            }}
-                        />
-                    </div>
-                ) : null}
-            </div>
-        );
-    }
-}
+                    <RoundButton
+                        backgroundColor={colors.purple}
+                        label="CHECK YOUR SHAME METER"
+                        labelColor={colors.white}
+                        labelStyle={{ fontSize: 18, padding: 30 }}
+                        onClick={handleNextClick}
+                    />
+                </div>
+            ) : null}
+        </div>
+    );
+};
 
 export default ImageUpload;

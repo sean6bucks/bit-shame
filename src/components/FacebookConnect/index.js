@@ -1,9 +1,6 @@
 import React from "react";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-import {
-    FacebookLoginButton,
-    InstagramLoginButton
-} from "react-social-login-buttons";
+import { FacebookLoginButton } from "react-social-login-buttons";
 
 const FacebookConnect = ({ handleCallback }) => {
     return (

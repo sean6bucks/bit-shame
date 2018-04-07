@@ -4,25 +4,28 @@ import { Card } from "material-ui/Card";
 import FullscreenDialog from "material-ui-fullscreen-dialog";
 
 // containers
-import FacebookConnectContainer from "./FacebookConnectContainer";
+import ImageUploadContainer from "./ImageUploadContainer";
+import ResultsContainer from "./ResultsContainer";
 
 // components
 import LoanForm from "../components/LoanForm";
-import ImageUpload from "../components/ImageUpload";
 import { Spinner } from "../components/globals";
 
-const endpoint = "https://owygiem6pe.execute-api.eu-west-1.amazonaws.com/dev/";
+const endpoint = "https://m482zc1xki.execute-api.eu-west-1.amazonaws.com/dev/";
 
 class LoanContainer extends Component {
     state = {
         amount: 1,
-        loading_app: false,
-        show_app: false,
+        loadingApp: false,
+        showApp: false,
         errors: {
             amount: ""
         },
-        show_step: "",
-        fb_access_token: null
+        showStep: "",
+        accessToken: null,
+        offerId: null,
+        uploadUrl: "",
+        offer: {}
     };
 
     updateAmount = amount => {
@@ -31,35 +34,39 @@ class LoanContainer extends Component {
 
     // submitOffer = token => {
     //     this.setState(
-    //         { show_app: true, loading_app: true, fb_access_token: token },
+    //         { showApp: true, loadingApp: true, accessToken: token },
     //         () => {
     //             setTimeout(() => {
     //                 this.setState({
-    //                     show_step: "upload",
-    //                     loading_app: false,
-    //                     upload_url: "something",
-    //                     offer_id: 123
+    //                     showStep: "upload",
+    //                     loadingApp: false,
+    //                     uploadUrl: "something",
+    //                     offerId: 123
     //                 });
     //             }, 2000);
     //         }
     //     );
     // };
+    setStep = step => {
+        this.setState({
+            showStep: step
+        });
+    };
 
     submitOffer = token => {
         this.setState(
-            { show_app: true, loading_app: true, fb_access_token: token },
+            { showApp: true, loadingApp: true, accessToken: token },
             () => {
                 axios
-                    .post(`${endpoint}loans?access_token=${token}`, {
+                    .post(`${endpoint}loans?accessToken=${token}`, {
                         amount: this.state.amount
                     })
-                    .then(response => {
-                        console.log(response);
+                    .then(({ data }) => {
                         this.setState({
-                            show_step: "upload",
-                            loading_app: false,
-                            upload_url: "something",
-                            offer_id: 123
+                            offerId: data.id,
+                            uploadUrl: data.uploadUrl,
+                            showStep: "upload",
+                            loadingApp: false
                         });
                     })
                     .catch(error => {
@@ -69,14 +76,62 @@ class LoanContainer extends Component {
         );
     };
 
-    getFinalOffer = file => {
+    imageUploaded = file => {
         this.setState({
-            loading_app: true
+            shameImage: file
         });
     };
 
+    finishLoan = () => {
+        const { offerId, accessToken } = this.state;
+        this.setState({ loadingApp: true }, () => {
+            axios
+                .post(
+                    `${endpoint}loans/${offerId}/finish?accessToken=${accessToken}`
+                )
+                .then(({ data }) => {
+                    if (data.offerId !== offerId) {
+                        this.setState({ offerId: data.offerId }, () => {
+                            this.pollOffer();
+                        });
+                    } else {
+                        this.pollOffer();
+                    }
+                })
+                .catch(errors => {
+                    console.log("FUCK OFF: ERRORS IN FINISH");
+                });
+        });
+    };
+
+    pollOffer = () => {
+        const { offerId, accessToken } = this.state;
+        axios
+            .get(`${endpoint}offers/${offerId}?accessToken=${accessToken}`)
+            .then(({ data }) => {
+                const { status } = data;
+                if (status === "ANALYSING")
+                    setTimeout(() => {
+                        this.pollOffer();
+                    }, 200);
+                else {
+                    // PAUSE A BIT FOR NON-JARRING UI
+                    setTimeout(() => {
+                        this.setState({
+                            loadingApp: false,
+                            offer: data,
+                            showStep: "results"
+                        });
+                    }, 2000);
+                }
+            })
+            .catch(errors => {
+                console.log("FUCK OFF: ERRORS IN FINISH");
+            });
+    };
+
     render() {
-        const { amount, loading_app, errors, show_app, show_step } = this.state;
+        const { amount, loadingApp, errors, showApp, showStep } = this.state;
         return (
             <div>
                 <Card
@@ -86,7 +141,7 @@ class LoanContainer extends Component {
                 >
                     <LoanForm
                         value={amount}
-                        loading={loading_app}
+                        loading={loadingApp}
                         error={errors.amount}
                         handleSubmit={this.submitOffer}
                         updateAmount={this.updateAmount}
@@ -94,18 +149,26 @@ class LoanContainer extends Component {
                     />
                 </Card>
                 <FullscreenDialog
-                    open={show_app}
+                    open={showApp}
                     appBarZDepth={0}
                     appBarStyle={{ height: 0 }}
                     style={{
                         backgroundColor: "#000"
                     }}
                 >
-                    {loading_app ? (
+                    {loadingApp ? (
                         <Spinner />
-                    ) : show_step === "upload" ? (
-                        <ImageUpload handleCheckShame={this.getFinalOffer} />
-                    ) : show_step === "offer" ? null : null}
+                    ) : showStep === "upload" ? (
+                        <ImageUploadContainer
+                            uploadUrl={this.state.uploadUrl}
+                            nextStep={this.finishLoan}
+                        />
+                    ) : showStep === "results" ? (
+                        <ResultsContainer
+                            offer={this.state.offer}
+                            setStep={this.setStep}
+                        />
+                    ) : null}
                 </FullscreenDialog>
             </div>
         );

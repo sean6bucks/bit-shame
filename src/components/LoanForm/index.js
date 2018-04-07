@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import FlatButton from "material-ui/FlatButton";
 import styled from "styled-components";
 import { InstagramLoginButton } from "react-social-login-buttons";
 
@@ -113,6 +112,7 @@ class CurrencyInput extends Component {
             <StyledInputBox>
                 <StyledSymbol>₿</StyledSymbol>
                 <StyledInput
+                    step="0.1"
                     type="number"
                     value={this.state.input}
                     onFocus={this.handleFocus}

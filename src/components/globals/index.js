@@ -35,7 +35,7 @@ export const Image = ({ style, src }) => {
 };
 
 export const RoundButton = props => {
-    const rounded = { borderRadius: 16 };
+    const rounded = { borderRadius: 50 };
     return <RaisedButton {...props} style={rounded} buttonStyle={rounded} />;
 };
 
@@ -66,5 +66,5 @@ export const colors = {
     white: "#FFFFFF",
     purple: "#512DA8",
     lightGrey: "#C9C9C9",
-    darkGrey: "#7f7f7f"
+    darkGrey: "#191919"
 };
