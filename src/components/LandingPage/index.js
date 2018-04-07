@@ -1,16 +1,15 @@
 import React from "react";
-import FlatButton from "material-ui/FlatButton";
 import styled from "styled-components";
-import { animateScroll as scroll, scrollSpy, scroller } from "react-scroll";
+import { animateScroll as scroll } from "react-scroll";
 
-import { Header, Container, Image, RoundButton, colors } from "../globals";
+import { Image, RoundButton, colors } from "../globals";
 
 // containers
 import LoanContainer from "../../containers/LoanContainer";
 
 // static assets
 import phones from "./images/header-image-phones@2x.png";
-import LogoImg from "./images/arrow.png";
+import arrow from "./images/arrow.png";
 
 const StyledListItem = styled.p`
     margin: 20px 0;
@@ -57,14 +56,14 @@ const LandingPage = () => {
                 />
             </div>
             <div
-                id="loan-section"
                 style={{
                     width: "100%",
                     margin: "0 auto",
                     display: "flex",
                     flexDirection: "row",
                     padding: "150px 75px",
-                    backgroundColor: "black"
+                    backgroundColor: "black",
+                    position: "relative"
                 }}
             >
                 <div
@@ -103,6 +102,15 @@ const LandingPage = () => {
                     style={{
                         flex: 1,
                         width: 360
+                    }}
+                />
+                <Image
+                    src={arrow}
+                    style={{
+                        position: "absolute",
+                        width: 64,
+                        right: 460,
+                        top: 495
                     }}
                 />
             </div>

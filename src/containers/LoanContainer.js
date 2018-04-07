@@ -9,6 +9,7 @@ import ResultsContainer from "./ResultsContainer";
 
 // components
 import LoanForm from "../components/LoanForm";
+import Success from "../components/Success";
 import { Spinner } from "../components/globals";
 
 const endpoint = "https://m482zc1xki.execute-api.eu-west-1.amazonaws.com/dev/";
@@ -25,7 +26,8 @@ class LoanContainer extends Component {
         accessToken: null,
         offerId: null,
         uploadUrl: "",
-        offer: {}
+        offer: {},
+        transactionId: "13233j34345kqjdk2"
     };
 
     updateAmount = amount => {
@@ -130,6 +132,23 @@ class LoanContainer extends Component {
             });
     };
 
+    sendBitCoin = walletId => {
+        this.setState(
+            {
+                loadingApp: true
+            },
+            () => {
+                // axios.push()
+                // .then()
+                this.setState({
+                    loadingApp: false,
+                    showStep: "success"
+                    // transactionId: data.transactionId
+                });
+            }
+        );
+    };
+
     render() {
         const { amount, loadingApp, errors, showApp, showStep } = this.state;
         return (
@@ -166,7 +185,14 @@ class LoanContainer extends Component {
                     ) : showStep === "results" ? (
                         <ResultsContainer
                             offer={this.state.offer}
+                            accessToken={this.state.accessToken}
+                            handleAcceptOffer={this.sendBitCoin}
                             setStep={this.setStep}
+                        />
+                    ) : showStep === "success" ? (
+                        <Success
+                            transactionId={this.state.transactionId}
+                            handleRestart={this.restartApp}
                         />
                     ) : null}
                 </FullscreenDialog>

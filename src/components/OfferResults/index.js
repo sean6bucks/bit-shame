@@ -138,7 +138,8 @@ const OfferResults = ({
     amount,
     friendsCount,
     interestRate,
-    handleTryAgain
+    handleTryAgain,
+    handleAccept
 }) => {
     return (
         <div
@@ -262,6 +263,7 @@ const OfferResults = ({
                                 padding: 30,
                                 width: 400
                             }}
+                            onClick={handleAccept}
                         />
                     </div>
                 </StyledMainBox>
