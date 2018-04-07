@@ -1,10 +1,64 @@
-import React from "react";
+import React, { Component } from "react";
 import styled from "styled-components";
 
 import { RoundButton, colors } from "../globals";
 import { FlatButton } from "material-ui";
 
 // {"id":"cec7d5bd-ca76-4fb8-a0a9-7bb478eaa860","amount":3,"friendsCount":811,"status":"OFFERED","faceMatches":true,"interestRate":7,"moderationLevels":["Explicit Nudity","Nudity"]}
+
+const StyledInputBox = styled.div`
+    display: flex;
+    flex-direction: row;
+    margin: 20px 0;
+    width: 100%;
+`;
+
+const StyledInput = styled.input`
+    line-height: 20px;
+    font-size: 18px;
+    padding: 15px;
+    flex: 1;
+    border: 1px solid ${colors.lightGrey};
+    border-radius: 10px;
+    outline: none;
+    color: ${colors.white};
+    font-family: "Roboto";
+    background: ${colors.darkGrey};
+    &:focus {
+        border: 1px solid ${colors.white};
+    }
+`;
+
+class WalletInput extends Component {
+    state = {
+        input: ""
+    };
+
+    handleChange = ({ target }) => {
+        if (!target) return;
+        if (target.value !== this.state.input) {
+            this.updateInput(target.value);
+        }
+    };
+
+    updateInput = (input = "") => {
+        this.setState({ input }, () => {
+            this.props.handleChange(input);
+        });
+    };
+
+    render() {
+        return (
+            <StyledInputBox>
+                <StyledInput
+                    placeholder="Wallet number"
+                    value={this.state.input}
+                    onChange={this.handleChange}
+                />
+            </StyledInputBox>
+        );
+    }
+}
 
 const StyledFlexGrid = styled.div`
     display: flex;
@@ -48,29 +102,6 @@ const StyledListItem = styled.li`
 const StyledItemValue = styled.span`
     color: inherit;
     float: right;
-`;
-
-const StyledInputBox = styled.div`
-    display: flex;
-    flex-direction: row;
-    margin: 20px 0;
-    width: 100%;
-`;
-
-const StyledInput = styled.input`
-    line-height: 20px;
-    font-size: 18px;
-    padding: 15px;
-    flex: 1;
-    border: 1px solid ${colors.lightGrey};
-    border-radius: 10px;
-    outline: none;
-    color: ${colors.white};
-    font-family: "Roboto";
-    background: ${colors.darkGrey};
-    &:focus {
-        border: 1px solid ${colors.white};
-    }
 `;
 
 const StyledLargeValue = styled.h1`
@@ -139,7 +170,8 @@ const OfferResults = ({
     friendsCount,
     interestRate,
     handleTryAgain,
-    handleAccept
+    handleAccept,
+    handleChange
 }) => {
     return (
         <div
@@ -250,9 +282,7 @@ const OfferResults = ({
                             </StyledItemValue>
                         </StyledListItem>
                     </StyledList>
-                    <StyledInputBox>
-                        <StyledInput placeholder="Wallet number" />
-                    </StyledInputBox>
+                    <WalletInput handleChange={handleChange} />
                     <div style={{ textAlign: "center" }}>
                         <RoundButton
                             label="SEND THE BITCOINS"

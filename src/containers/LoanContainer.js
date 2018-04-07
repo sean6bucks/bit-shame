@@ -133,6 +133,7 @@ class LoanContainer extends Component {
     };
 
     sendBitCoin = walletId => {
+        console.log(walletId);
         this.setState(
             {
                 loadingApp: true

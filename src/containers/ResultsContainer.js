@@ -7,15 +7,24 @@ import OfferResults from "../components/OfferResults";
 const endpoint = "http://something";
 
 class ResultsContainer extends Component {
+    state = {
+        walletId: ""
+    };
+
     tryUploadAgain = () => {
         this.props.setStep("upload");
     };
 
-    acceptOffer = walletId => {
+    updateInput = value => {
+        this.setState({
+            walletId: value
+        });
+    };
+
+    acceptOffer = () => {
         // TODO: FINISH
         const { accessToken, offer: { amount } } = this.props;
-        console.log(accessToken, amount);
-        this.props.handleAcceptOffer(walletId);
+        this.props.handleAcceptOffer(this.state.walletId);
     };
 
     render() {
@@ -32,6 +41,7 @@ class ResultsContainer extends Component {
         ) : (
             <OfferResults
                 {...this.props.offer}
+                handleChange={this.updateInput}
                 handleTryAgain={this.tryUploadAgain}
                 handleAccept={this.acceptOffer}
             />
