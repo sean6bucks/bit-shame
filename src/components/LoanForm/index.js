@@ -9,7 +9,7 @@ import FacebookConnectContainer from "../../containers/FacebookConnectContainer"
 const StyledInputBox = styled.div`
     display: flex;
     flex-direction: row;
-    margin: 20px 0;
+    margin: 30px 0;
     width: 100%;
 `;
 
@@ -133,8 +133,8 @@ const LoanForm = ({
 }) => {
     return (
         <form style={{ borderRadius: 2 }}>
-            <div style={{ padding: 30 }}>
-                <h2 style={{ color: "#000" }}>
+            <div style={{ padding: "50px 30px" }}>
+                <h2 style={{ fontSize: 28, color: "#000" }}>
                     Fill in the amount of Bitcoins
                 </h2>
                 <CurrencyInput handleChange={updateAmount} min="0" />

@@ -1,51 +1,111 @@
 import React from "react";
 import FlatButton from "material-ui/FlatButton";
+import styled from "styled-components";
+import { animateScroll as scroll, scrollSpy, scroller } from "react-scroll";
+
 import { Header, Container, Image, RoundButton, colors } from "../globals";
 
 // containers
 import LoanContainer from "../../containers/LoanContainer";
 
 // static assets
+import phones from "./images/header-image-phones@2x.png";
 import LogoImg from "./images/arrow.png";
+
+const StyledListItem = styled.p`
+    margin: 20px 0;
+    color: ${colors.lightGrey};
+`;
 
 const LandingPage = () => {
     return (
         <div>
-            <Header>
-                <Image style={{ width: 100 }} src={LogoImg} />
-                <div style={{ float: "right" }}>
-                    <FlatButton
-                        label="Login"
-                        style={{ color: "#fff", marginRight: 10 }}
-                    />
-                    <RoundButton
-                        label="POST A DIRTY PHOTO"
-                        backgroundColor={colors.purple}
-                        labelColor="#FFFFFF"
-                        labelStyle={{
-                            padding: "0 25px"
-                        }}
-                    />
-                </div>
-            </Header>
-            <Container
+            <div
                 style={{
+                    width: "100%",
+                    maxWidth: 800,
+                    margin: "0 auto",
+                    textAlign: "center",
+                    padding: "200px 50px 0 50px"
+                }}
+            >
+                <h1
+                    style={{
+                        fontSize: 50,
+                        textAlign: "center",
+                        marginBottom: 20
+                    }}
+                >
+                    Put your social life in danger and get rich
+                </h1>
+                <RoundButton
+                    label="LOAN BITCOINS NOW"
+                    backgroundColor={colors.purple}
+                    labelColor={colors.white}
+                    labelStyle={{
+                        fontSize: 18,
+                        padding: 30,
+                        width: 400
+                    }}
+                    onClick={() => {
+                        scroll.scrollTo(815, { duration: 600 });
+                    }}
+                />
+                <Image
+                    style={{ marginTop: 100, marginLeft: 20 }}
+                    src={phones}
+                />
+            </div>
+            <div
+                id="loan-section"
+                style={{
+                    width: "100%",
+                    margin: "0 auto",
                     display: "flex",
-                    flexDirection: "row"
+                    flexDirection: "row",
+                    padding: "150px 75px",
+                    backgroundColor: "black"
                 }}
             >
                 <div
                     style={{
-                        flex: 1
+                        flex: 1,
+                        padding: "0 50px"
                     }}
-                />
+                >
+                    <h5
+                        style={{
+                            display: "inline-block",
+                            padding: "3px 2px 0px",
+                            margin: "20px 0",
+                            backgroundColor: colors.purple
+                        }}
+                    >
+                        ACT NOW AND SHAME LATER
+                    </h5>
+                    <h2
+                        style={{ fontSize: 40, lineHeight: "50px", width: 475 }}
+                    >
+                        Bitshame will give you the lowish interest rate % if
+                        you’ll take the risk
+                    </h2>
+                    <div style={{ paddingLeft: 50, marginTop: 50 }}>
+                        <StyledListItem>
+                            1. CONNECT WITH FACEBOOK or INSTAGRAM
+                        </StyledListItem>
+                        <StyledListItem>2. UPLOAD A SHAME PHOTO</StyledListItem>
+                        <StyledListItem>
+                            3. MORE SHAME = BETTER INTEREST RATES
+                        </StyledListItem>
+                    </div>
+                </div>
                 <LoanContainer
                     style={{
                         flex: 1,
                         width: 360
                     }}
                 />
-            </Container>
+            </div>
         </div>
     );
 };
